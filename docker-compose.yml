@@ -18,9 +18,7 @@ services:
 
   fastapi:
     restart: always
-    build:
-      context: ./
-      dockerfile: Dockerfile
+    image: dst-fastapi:latest
     ports:
       - 5000:5000
     depends_on:

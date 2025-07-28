@@ -1,5 +1,10 @@
 from sqlalchemy import create_engine, MetaData
 
+import logging
+logging.basicConfig()
+logging.getLogger("sqlalchemy.engine").setLevel(logging.INFO)
+
+
 engine = create_engine("postgresql://admin:password@db:5432/storedb")
 
 meta = MetaData()

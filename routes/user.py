@@ -14,7 +14,7 @@ f = Fernet(key)
 
 @user.get("/")
 def root():
-    return {"message": "Congratulations ! It works ! You should try to take a look at the pgadmin panel on port 8080"}
+    return {"message": "Welcome on on the Users management API"}
     
 @user.get(
     "/users",
@@ -46,17 +46,26 @@ def get_user(id: str):
 def create_user(user: User):
     new_user = {"name": user.name, "email": user.email}
     new_user["password"] = f.encrypt(user.password.encode("utf-8"))
-    result = conn.execute(users.insert().values(new_user))
-    return conn.execute(users.select().where(users.c.id == result.lastrowid)).first()
 
+    # Insère et récupère l'ID
+    result = conn.execute(users.insert().returning(users.c.id).values(new_user))
+    user_id = result.fetchone()[0]
+    print("Inserted user ID (via RETURNING):", user_id)
+
+    # Renvoie l'utilisateur nouvellement inséré
+    return conn.execute(users.select().where(users.c.id == user_id)).first()
 
 @user.put(
-    "users/{id}", tags=["users"], response_model=User, description="Update a User by Id"
+    "/users/{id}", tags=["users"], response_model=User, description="Update a User by Id"
 )
 def update_user(user: User, id: int):
     conn.execute(
         users.update()
-        .values(name=user.name, email=user.email, password=user.password)
+        .values(
+            name=user.name,
+            email=user.email,
+            password=f.encrypt(user.password.encode("utf-8"))
+            )
         .where(users.c.id == id)
     )
     return conn.execute(users.select().where(users.c.id == id)).first()
