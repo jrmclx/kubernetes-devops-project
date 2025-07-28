@@ -7,10 +7,7 @@ RUN apk add --no-cache \
     libffi-dev \
     openssl-dev \
     postgresql-dev \
-    # build-base \
-    py3-setuptools \
-    # py3-wheel \
-    py3-pip
+    py3-setuptools
 
 WORKDIR /app
 
