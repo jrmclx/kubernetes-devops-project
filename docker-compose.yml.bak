@@ -18,9 +18,9 @@ services:
 
   fastapi:
     restart: always
-    image: dst-fastapi:latest
-    environment:
-      - DATABASE_URL=postgresql://admin:password@db:5432/storedb
+    build:
+      context: ./
+      dockerfile: Dockerfile
     ports:
       - 5000:5000
     depends_on:
